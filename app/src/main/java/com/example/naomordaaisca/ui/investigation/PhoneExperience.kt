@@ -17,10 +17,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -270,59 +273,63 @@ private fun HomeScreen(
     val now = rememberNow()
     val unreadClues = track.clues.count { it.appId == SimulatedAppId.MESSAGES && session.statusOf(it.id) == EvidenceStatus.AVAILABLE }
     PhoneScaffold(wallpaper = true) {
-        Column(
-            modifier = Modifier.weight(1f).fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 12.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                InitialsAvatar(PHONE_OWNER_INITIALS)
-                Spacer(Modifier.width(10.dp))
-                Text(PHONE_OWNER, style = inter(12f, color = InkSoft), modifier = Modifier.weight(1f))
-                InvestigationMenuButton(R.drawable.ic_sliders, dispatch)
-            }
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(now.clock(), style = inter(62f, FontWeight.Light, lineHeight = 1f))
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(now.shortDate(), style = plexMono(10f, color = InkSoft))
-                    Text("17° · Nublado", style = plexMono(10f, color = InkSoft))
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth().panel().padding(14.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+        // Em telas baixas (TV Box em 720p) a tela inicial rola em vez de cortar o dock.
+        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
+            Column(
+                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight)
+                    .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 12.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                Image(painterResource(R.drawable.ic_calendar), contentDescription = null)
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                    Text(track.objective, style = inter(12f, FontWeight.Medium))
-                    Text("CAPI · ${definition.title.uppercase()}", style = plexMono(10f))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    InitialsAvatar(PHONE_OWNER_INITIALS)
+                    Spacer(Modifier.width(10.dp))
+                    Text(PHONE_OWNER, style = inter(12f, color = InkSoft), modifier = Modifier.weight(1f))
+                    InvestigationMenuButton(R.drawable.ic_sliders, dispatch)
                 }
-            }
-            Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(23.dp)) {
-                listOf(
-                    listOf(PhoneApp.NAVEGADOR, PhoneApp.CONTATOS, PhoneApp.SMS),
-                    listOf(PhoneApp.TMAIL, PhoneApp.GALERIA, PhoneApp.SOCIAL),
-                    listOf(PhoneApp.SEND, PhoneApp.CONFIGURACOES, PhoneApp.LOJA),
-                ).forEach { row ->
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(now.clock(), style = inter(62f, FontWeight.Light, lineHeight = 1f))
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        row.forEach { app -> AppTile(app, badge = if (app == PhoneApp.SEND) unreadClues else 0, onClick = { onOpen(app) }) }
+                        Text(now.shortDate(), style = plexMono(10f, color = InkSoft))
+                        Text("17° · Nublado", style = plexMono(10f, color = InkSoft))
                     }
                 }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth().height(34.dp),
-                horizontalArrangement = Arrangement.spacedBy(9.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Image(painterResource(R.drawable.ic_search_home), contentDescription = null)
-                Text("Buscar no celular", style = inter(11f, color = InkSoft))
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth().panel(22.dp).padding(horizontal = 38.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                AppTile(PhoneApp.MUSICAS, badge = 0, onClick = { onOpen(PhoneApp.MUSICAS) })
-                AppTile(PhoneApp.TELEFONE, badge = 0, onClick = { onOpen(PhoneApp.TELEFONE) })
+                Row(
+                    modifier = Modifier.fillMaxWidth().panel().padding(14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(painterResource(R.drawable.ic_calendar), contentDescription = null)
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                        Text(track.objective, style = inter(12f, FontWeight.Medium))
+                        Text("CAPI · ${definition.title.uppercase()}", style = plexMono(10f))
+                    }
+                }
+                Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(23.dp)) {
+                    listOf(
+                        listOf(PhoneApp.NAVEGADOR, PhoneApp.CONTATOS, PhoneApp.SMS),
+                        listOf(PhoneApp.TMAIL, PhoneApp.GALERIA, PhoneApp.SOCIAL),
+                        listOf(PhoneApp.SEND, PhoneApp.CONFIGURACOES, PhoneApp.LOJA),
+                    ).forEach { row ->
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            row.forEach { app -> AppTile(app, badge = if (app == PhoneApp.SEND) unreadClues else 0, onClick = { onOpen(app) }) }
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(34.dp),
+                    horizontalArrangement = Arrangement.spacedBy(9.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(painterResource(R.drawable.ic_search_home), contentDescription = null)
+                    Text("Buscar no celular", style = inter(11f, color = InkSoft))
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth().panel(22.dp).padding(horizontal = 38.dp, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    AppTile(PhoneApp.MUSICAS, badge = 0, onClick = { onOpen(PhoneApp.MUSICAS) })
+                    AppTile(PhoneApp.TELEFONE, badge = 0, onClick = { onOpen(PhoneApp.TELEFONE) })
+                }
             }
         }
     }
@@ -331,7 +338,8 @@ private fun HomeScreen(
 @Composable
 private fun AppTile(app: PhoneApp, badge: Int, onClick: () -> Unit) {
     Column(
-        modifier = Modifier.width(100.dp).clip(RoundedCornerShape(12.dp)).clickable(onClickLabel = "Abrir ${app.title}", onClick = onClick),
+        modifier = Modifier.width(100.dp).clip(RoundedCornerShape(12.dp)).clickable(onClickLabel = "Abrir ${app.title}", onClick = onClick)
+            .padding(bottom = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(9.dp),
     ) {

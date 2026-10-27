@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,8 +39,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -72,6 +80,8 @@ fun Modifier.panel(radius: Dp = 16.dp, color: Color = PanelTranslucent, border: 
     return clip(shape).background(color, shape).border(1.dp, border, shape)
 }
 
+private val PHONE_MAX_WIDTH = 480.dp
+
 /** Moldura do celular simulado: barra de estado, conteúdo e indicador de início. */
 @Composable
 fun PhoneScaffold(
@@ -88,7 +98,11 @@ fun PhoneScaffold(
                 modifier = Modifier.fillMaxSize(),
             )
         }
-        Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+        // Em tela larga (TV Box) o celular fica centralizado com proporção de retrato, em vez de esticado.
+        Column(
+            Modifier.align(Alignment.Center).fillMaxHeight().widthIn(max = PHONE_MAX_WIDTH).fillMaxWidth()
+                .windowInsetsPadding(WindowInsets.safeDrawing),
+        ) {
             StatusBar()
             Column(Modifier.weight(1f).fillMaxWidth(), content = content)
             HomeIndicator(onHome)
@@ -293,8 +307,8 @@ fun IncomingBubble(text: String, time: String, header: (@Composable () -> Unit)?
 
 /** Resposta que a jogadora pode enviar: tem o visual de mensagem enviada. */
 @Composable
-fun ReplyOption(label: String, accent: Color, bubble: Color, onClick: () -> Unit) {
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
+fun ReplyOption(label: String, accent: Color, bubble: Color, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Column(modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
         val shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp, bottomEnd = 3.dp, bottomStart = 12.dp)
         Column(
             modifier = Modifier.widthIn(max = 310.dp).clip(shape).background(bubble).border(1.dp, accent.copy(alpha = 0.35f), shape)
@@ -321,6 +335,18 @@ fun EvidenceCard(
     onDiscover: () -> Unit,
     onUse: (() -> Unit)?,
 ) {
+    // Com controle remoto, o foco segue a pista: examinar leva a "anotar" e anotar leva ao próximo item,
+    // em vez de cair no topo da tela quando o elemento focado deixa de ser clicável.
+    val focusManager = LocalFocusManager.current
+    val noteFocus = remember { FocusRequester() }
+    var cardFocused by remember { mutableStateOf(false) }
+    var focusNoteWhenShown by remember { mutableStateOf(false) }
+    LaunchedEffect(status, focusNoteWhenShown) {
+        if (focusNoteWhenShown && status == EvidenceStatus.DISCOVERED) {
+            noteFocus.requestFocus()
+            focusNoteWhenShown = false
+        }
+    }
     val border = when (status) {
         EvidenceStatus.AVAILABLE -> accent.copy(alpha = 0.45f)
         EvidenceStatus.DISCOVERED -> Line
@@ -328,7 +354,11 @@ fun EvidenceCard(
     }
     Column(
         modifier = Modifier.fillMaxWidth().panel(12.dp, Panel, border)
-            .clickable(enabled = status == EvidenceStatus.AVAILABLE, onClickLabel = "Examinar", onClick = onDiscover)
+            .onFocusChanged { cardFocused = it.isFocused }
+            .clickable(enabled = status == EvidenceStatus.AVAILABLE, onClickLabel = "Examinar") {
+                focusNoteWhenShown = cardFocused && onUse != null
+                onDiscover()
+            }
             .padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -342,8 +372,13 @@ fun EvidenceCard(
                 Text(content, style = inter(12f, color = InkSoft))
                 if (onUse != null) {
                     Box(
-                        modifier = Modifier.clip(CircleShape).background(actionColor).border(1.dp, accent.copy(alpha = 0.4f), CircleShape)
-                            .clickable(onClick = onUse).padding(horizontal = 14.dp, vertical = 8.dp),
+                        modifier = Modifier.focusRequester(noteFocus).clip(CircleShape).background(actionColor)
+                            .border(1.dp, accent.copy(alpha = 0.4f), CircleShape)
+                            .clickable {
+                                focusManager.moveFocus(FocusDirection.Down)
+                                onUse()
+                            }
+                            .padding(horizontal = 14.dp, vertical = 8.dp),
                     ) {
                         Text("Anotar como pista", style = inter(12f, FontWeight.Medium))
                     }
@@ -359,14 +394,21 @@ fun EvidenceCard(
 
 @Composable
 fun ConfirmOverlay(title: String, body: String, confirmLabel: String, cancelLabel: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
+    // Com controle remoto, o foco começa na opção segura e não sai do diálogo para a tela de trás.
+    val cancelFocus = remember { FocusRequester() }
+    LaunchedEffect(Unit) { cancelFocus.requestFocus() }
     Box(
         modifier = Modifier.fillMaxSize().background(Color(0xCC050909))
+            .focusProperties { canFocus = false }
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onCancel),
         contentAlignment = Alignment.Center,
     ) {
         Column(
-            modifier = Modifier.padding(24.dp).fillMaxWidth().panel(20.dp, Panel)
+            modifier = Modifier.padding(24.dp).widthIn(max = PHONE_MAX_WIDTH).fillMaxWidth().panel(20.dp, Panel)
+                .focusProperties { canFocus = false }
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {}
+                .focusProperties { onExit = { cancelFocusChange() } }
+                .focusGroup()
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -374,7 +416,7 @@ fun ConfirmOverlay(title: String, body: String, confirmLabel: String, cancelLabe
             Text(body, style = inter(13f, color = InkSoft))
             Spacer(Modifier.height(4.dp))
             PrimaryButton(confirmLabel, onConfirm)
-            SecondaryButton(cancelLabel, onCancel)
+            SecondaryButton(cancelLabel, onCancel, Modifier.focusRequester(cancelFocus))
         }
     }
 }

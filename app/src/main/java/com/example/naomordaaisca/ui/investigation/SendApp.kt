@@ -17,10 +17,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -148,8 +151,13 @@ private fun SendConversation(
     val time = rememberNow().minutesAgo(2).clock()
     val choices = InvestigationReducer.availableChoices(session)
     val scroll = rememberScrollState()
+    val firstChoiceFocus = remember { FocusRequester() }
     LaunchedEffect(choices.isNotEmpty()) {
-        if (choices.isNotEmpty()) scroll.animateScrollTo(scroll.maxValue)
+        if (choices.isNotEmpty()) {
+            // Com controle remoto, o foco vai para a primeira resposta liberada (no toque, isso não tem efeito).
+            runCatching { firstChoiceFocus.requestFocus() }
+            scroll.animateScrollTo(scroll.maxValue)
+        }
     }
     PhoneScaffold(onHome = onHome) {
         AppHeader(
@@ -183,8 +191,11 @@ private fun SendConversation(
             if (choices.isNotEmpty()) {
                 Spacer(Modifier.padding(top = 4.dp))
                 CenteredLabel("Com as pistas reunidas, como você quer agir?", Moss)
-                choices.forEach { choice ->
-                    ReplyOption(choice.label, SendCyan, SendBubble) { dispatch(GameAction.MakeInvestigationChoice(choice.id)) }
+                choices.forEachIndexed { index, choice ->
+                    ReplyOption(
+                        choice.label, SendCyan, SendBubble,
+                        modifier = if (index == 0) Modifier.focusRequester(firstChoiceFocus) else Modifier,
+                    ) { dispatch(GameAction.MakeInvestigationChoice(choice.id)) }
                 }
             }
         }

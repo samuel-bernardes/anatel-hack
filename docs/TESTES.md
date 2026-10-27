@@ -17,9 +17,22 @@ Na validação mais recente, `./gradlew testDebugUnitTest assembleDebug` termino
 
 O R8 mostrou avisos de tipos não encontrados em referências de `androidx.compose.ui.graphics`, `androidx.window` e Coroutines (`java.lang.instrument`/`sun.misc`). Eles não impediram o empacotamento. Não foram suprimidos nesta revisão; valide o APK release em dispositivo e investigue compatibilidade das referências antes de distribuir.
 
+## Validação em TV Box real
+
+Aparelho: TV Box genérica Allwinner H313 (Android 10, API 29, userspace 32 bits, 1 GB de RAM, tela 1280x720 a 160 dpi), instalação por `adb` pela rede e uso apenas com controle remoto (setas, OK e Voltar).
+
+- **Release travava na abertura** no Android 10 (`IllegalAccessError` em `androidx.startup.InitializationProvider`), causado pela otimização R8 restrita por `packageScope`. Removido o `packageScope`; o release abre em cerca de 2 s (o debug leva 8 s) e usa cerca de 31 MB de RAM.
+- Foco do controle era invisível. Agora o tema desenha um contorno claro no item focado.
+- O celular simulado ficava esticado nos 1280 px e o dock da tela inicial era cortado. Agora a moldura fica centralizada (até 480 dp de largura) e a tela inicial rola quando falta altura.
+- Ao examinar ou anotar uma pista, o foco caía no botão "Voltar" do topo. Agora vai para "Anotar como pista" e, depois, para o próximo item; quando as respostas são liberadas, o foco vai para a primeira.
+- Os diálogos de sair/reiniciar começam na opção segura e não deixam o foco escapar para a tela de trás.
+- Fluxo completo validado com o controle: início, bloqueio, tela inicial, apps sem pistas, Send, Navegador, escolha de risco, recuperação, conclusão, reinício e Voltar. A tentativa e a conclusão sobreviveram a `am force-stop`.
+
+Para instalar o release numa TV Box sem configurar assinatura no projeto, assine o APK com a chave de debug (`zipalign` + `apksigner` do build-tools) e use `adb install -r`.
+
 ## Limites
 
 - Não há testes instrumentados Compose em `app/src/androidTest`.
-- `adb` não está instalado neste ambiente; não foi possível executar `connectedDebugAndroidTest`, instalar o APK ou testar numa TV Box/emulador.
-- Portanto, o build confirma compilação e empacotamento; os testes unitários confirmam regras puras e validação do catálogo. Eles não confirmam foco do controle remoto, tamanho visual de textos, contraste, leitor de tela ou comportamento de instalação em hardware.
-- A persistência real de SharedPreferences e o encerramento forçado do processo não foram testados em dispositivo; os testes cobrem codec e recuperação do snapshot sem Android.
+- Botões decorativos do Navegador (avançar, compartilhar, menu) recebem foco, mas não fazem nada.
+- Os textos de ajuda ainda dizem "toque para examinar/escolher", mesmo quando o jogador usa o controle remoto.
+- Leitor de tela e contraste não foram avaliados formalmente.

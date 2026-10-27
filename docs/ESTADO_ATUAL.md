@@ -2,7 +2,7 @@
 
 ## Concluído
 
-- Aplicativo Android em Kotlin com telas de hub, missão, feedback e conclusão feitas em Jetpack Compose para TV.
+- Aplicativo Android em Kotlin com telas de hub, missão, feedback e conclusão feitas em Jetpack Compose, validado em TV Box com controle remoto.
 - Seleção de faixa etária, abertura de missão pelo hub, inspeção opcional ou obrigatória de detalhes, ajuda da Capi, escolha, consequência, conclusão, retorno ao hub e repetição.
 - Três missões com conteúdo separado da apresentação: oferta de item em jogo, mensagem relacionada à escola e apoio a alguém alvo de agressões num grupo.
 - Duas trilhas de conteúdo por missão: Explorador (8–10) e Agente (11–14).
@@ -25,16 +25,15 @@
 
 ## Limitações conhecidas
 
-- Não foi possível testar instalação, foco por controle remoto, leitura de textos e navegação em uma TV Box: `adb` não está disponível neste ambiente e nenhum dispositivo foi detectado.
-- Não há validação manual ou automatizada da aparência em emulador nesta revisão. Os testes unitários e o build não comprovam ergonomia em tela grande.
+- Instalação, foco por controle remoto e navegação foram validados numa TV Box Android 10 (ver `docs/TESTES.md`). A legibilidade dos textos menores a distância de sofá ainda precisa de avaliação com crianças.
 - Se o estado salvo de uma atividade vier inválido, a lógica recupera para o hub sem exibir uma mensagem específica de erro.
-- A variante release é gerada sem assinatura configurada (`app-release-unsigned.apk`); não está pronta para distribuição/publicação. A execução release também emitiu avisos R8 sobre tipos ausentes em referências de AndroidX e Coroutines, embora o APK tenha sido empacotado.
+- A variante release é gerada sem assinatura configurada (`app-release-unsigned.apk`); não está pronta para distribuição/publicação. Os avisos R8 sobre tipos ausentes em AndroidX e Coroutines não afetaram a execução na TV Box.
 - Os finais das missões são cenários narrativos simulados. A aplicação não consulta um jogo, escola, grupo ou serviço real.
 - Os canais oficiais descritos nas duas primeiras missões pertencem a situações fictícias e devem ser adaptados antes de uso associado a uma escola ou plataforma real.
 
 ## Pendências prioritárias
 
-1. Validar foco visível, seleção por controle remoto, rolagem e texto em uma TV Box real; a navegação foi implementada com botões Compose TV, mas hardware não foi acessado.
+1. Avaliar o tamanho dos textos na TV a distância de sofá e trocar "toque para…" por um texto que sirva também ao controle remoto.
 2. Fazer revisão de conteúdo com educadores e adaptar exemplos de jogos ao contexto de uso.
 3. Considerar testes instrumentados Compose e testar a restauração após encerrar forçadamente o processo em dispositivo.
 4. Após validar a investigação inicial, decidir como migrar as missões escolares e de grupo para o novo formato sem remover o fluxo existente antes disso.
