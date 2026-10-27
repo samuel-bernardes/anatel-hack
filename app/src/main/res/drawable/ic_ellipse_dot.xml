@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exportado do Figma "Não Morda a Isca" -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="8dp"
+    android:height="8dp"
+    android:viewportWidth="8"
+    android:viewportHeight="8">
+    <path
+        android:pathData="M0.0,4.0A4.0,4.0 0 1,1 8.0,4.0A4.0,4.0 0 1,1 0.0,4.0Z"
+        android:fillColor="#FFB4CC98" />
+</vector>

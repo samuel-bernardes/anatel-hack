@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exportado do Figma "Não Morda a Isca" -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="12dp"
+    android:height="12dp"
+    android:viewportWidth="12"
+    android:viewportHeight="12">
+    <path
+        android:pathData="M9.00024 3L3.4998 8.50038L0.9996 6.00021M11.0004 5.00014L7.2501 8.7504L6.50004 8.00035"
+        android:strokeColor="#FF8DD6E3"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+</vector>

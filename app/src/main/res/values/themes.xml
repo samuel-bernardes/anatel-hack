@@ -1,0 +1,6 @@
+<resources>
+
+    <style name="Theme.NaoMordaAIsca" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/night</item>
+    </style>
+</resources>

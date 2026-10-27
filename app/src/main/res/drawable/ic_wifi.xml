@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exportado do Figma "Não Morda a Isca" -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="14dp"
+    android:height="14dp"
+    android:viewportWidth="14"
+    android:viewportHeight="14">
+    <path
+        android:pathData="M7 11.6662H7.00583M1.1662 5.14433C2.77056 3.70947 4.84753 2.9162 7 2.9162C9.15248 2.9162 11.2294 3.70947 12.8338 5.14433M2.91634 7.50037C4.00685 6.43154 5.47299 5.83287 7 5.83287C8.52701 5.83287 9.99315 6.43154 11.0837 7.50037M4.95817 9.58328C5.50342 9.04887 6.23649 8.74953 7 8.74953C7.76351 8.74953 8.49658 9.04887 9.04183 9.58328"
+        android:strokeColor="#FFB4CC98"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+</vector>
