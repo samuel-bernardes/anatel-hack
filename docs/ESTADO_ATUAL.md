@@ -33,7 +33,7 @@
 
 ## Pendências prioritárias
 
-1. Avaliar o tamanho dos textos na TV a distância de sofá e trocar "toque para…" por um texto que sirva também ao controle remoto.
+1. Avaliar o tamanho dos textos na TV a distância de sofá.
 2. Fazer revisão de conteúdo com educadores e adaptar exemplos de jogos ao contexto de uso.
 3. Considerar testes instrumentados Compose e testar a restauração após encerrar forçadamente o processo em dispositivo.
 4. Após validar a investigação inicial, decidir como migrar as missões escolares e de grupo para o novo formato sem remover o fluxo existente antes disso.

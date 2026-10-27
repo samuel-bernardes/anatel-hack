@@ -26,6 +26,7 @@ Aparelho: TV Box genérica Allwinner H313 (Android 10, API 29, userspace 32 bits
 - O celular simulado ficava esticado nos 1280 px e o dock da tela inicial era cortado. Agora a moldura fica centralizada (até 480 dp de largura) e a tela inicial rola quando falta altura.
 - Ao examinar ou anotar uma pista, o foco caía no botão "Voltar" do topo. Agora vai para "Anotar como pista" e, depois, para o próximo item; quando as respostas são liberadas, o foco vai para a primeira.
 - Os diálogos de sair/reiniciar começam na opção segura e não deixam o foco escapar para a tela de trás.
+- Os textos de ajuda passaram de "toque para…" a "selecione para…", e os botões só decorativos do Navegador deixaram de receber foco.
 - Fluxo completo validado com o controle: início, bloqueio, tela inicial, apps sem pistas, Send, Navegador, escolha de risco, recuperação, conclusão, reinício e Voltar. A tentativa e a conclusão sobreviveram a `am force-stop`.
 
 Para instalar o release numa TV Box sem configurar assinatura no projeto, assine o APK com a chave de debug (`zipalign` + `apksigner` do build-tools) e use `adb install -r`.
@@ -33,6 +34,4 @@ Para instalar o release numa TV Box sem configurar assinatura no projeto, assine
 ## Limites
 
 - Não há testes instrumentados Compose em `app/src/androidTest`.
-- Botões decorativos do Navegador (avançar, compartilhar, menu) recebem foco, mas não fazem nada.
-- Os textos de ajuda ainda dizem "toque para examinar/escolher", mesmo quando o jogador usa o controle remoto.
 - Leitor de tela e contraste não foram avaliados formalmente.

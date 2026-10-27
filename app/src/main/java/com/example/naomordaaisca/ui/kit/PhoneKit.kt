@@ -316,7 +316,7 @@ fun ReplyOption(label: String, accent: Color, bubble: Color, modifier: Modifier 
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(label, style = inter(12.5f))
-            Text("TOQUE PARA ESCOLHER", style = plexMono(9f, color = accent), modifier = Modifier.align(Alignment.End))
+            Text("SELECIONE PARA RESPONDER", style = plexMono(9f, color = accent), modifier = Modifier.align(Alignment.End))
         }
     }
 }
@@ -367,7 +367,7 @@ fun EvidenceCard(
             Text(title, style = inter(13f, FontWeight.SemiBold), modifier = Modifier.weight(1f))
         }
         when (status) {
-            EvidenceStatus.AVAILABLE -> Text("TOQUE PARA EXAMINAR", style = plexMono(9f, color = accent))
+            EvidenceStatus.AVAILABLE -> Text("SELECIONE PARA EXAMINAR", style = plexMono(9f, color = accent))
             EvidenceStatus.DISCOVERED -> {
                 Text(content, style = inter(12f, color = InkSoft))
                 if (onUse != null) {

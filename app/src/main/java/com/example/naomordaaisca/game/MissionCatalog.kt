@@ -14,7 +14,7 @@ object MissionCatalog {
                     startingStepId = "game-discovery",
                     steps = listOf(
                         InformationStep("game-discovery", "Uma skin lendária", "No intervalo da partida, aparece uma oferta: uma skin rara grátis, disponível por pouco tempo. Parece combinar com o jogo que você está jogando.", emptyList(), nextStepId = "game-investigation"),
-                        InformationStep("game-investigation", "Investigue a oferta", "Toque em alguns detalhes para descobrir mais. Você não precisa abrir todos para decidir como conferir.", listOf(
+                        InformationStep("game-investigation", "Investigue a oferta", "Selecione alguns detalhes para descobrir mais. Você não precisa abrir todos para decidir como conferir.", listOf(
                             InspectableDetail("explorer-sender", "Quem enviou?", "O perfil usa o nome e o símbolo da equipe do jogo, mas não tem confirmação de que é o canal oficial."),
                             InspectableDetail("explorer-channel", "Como chegou?", "A oferta apareceu numa mensagem direta depois da partida, não no aviso dentro do jogo."),
                             InspectableDetail("explorer-login", "O que o site pede?", "A página pede a senha da conta e um código temporário para liberar a skin."),

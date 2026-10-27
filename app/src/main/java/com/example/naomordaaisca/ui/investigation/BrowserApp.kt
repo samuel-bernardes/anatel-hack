@@ -115,11 +115,19 @@ fun BrowserApp(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(R.drawable.ic_chevron_left_nav, "Voltar", onBack)
-            IconButton(R.drawable.ic_chevron_right_nav, null, {})
-            IconButton(R.drawable.ic_share, null, {})
+            DecorativeIcon(R.drawable.ic_chevron_right_nav)
+            DecorativeIcon(R.drawable.ic_share)
             IconButton(R.drawable.ic_square, "Tela inicial", onHome)
-            IconButton(R.drawable.ic_menu, null, {})
+            DecorativeIcon(R.drawable.ic_menu)
         }
+    }
+}
+
+/** Botão só visual da barra do navegador: não recebe foco do controle remoto, porque não faz nada. */
+@Composable
+private fun DecorativeIcon(icon: Int) {
+    Box(Modifier.size(32.dp), contentAlignment = Alignment.Center) {
+        Image(painterResource(icon), contentDescription = null)
     }
 }
 

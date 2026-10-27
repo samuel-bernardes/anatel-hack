@@ -48,7 +48,7 @@ A tela inicial tem o objetivo da Capi no cartão de lembrete e os 11 aplicativos
 
 No Send fica a conversa com a Lia. A Capi resume a situação no alto da conversa, e as pistas aparecem como cartões. Cada pista passa por três estados:
 
-1. **Disponível:** "toque para examinar".
+1. **Disponível:** "selecione para examinar".
 2. **Descoberta:** mostra o conteúdo e o botão **Anotar como pista**.
 3. **Anotada:** marcada com ✓.
 

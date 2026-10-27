@@ -226,7 +226,7 @@ private fun LockScreen(track: InvestigationTrack, onUnlock: () -> Unit, onOpenNo
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text("Deslize para desbloquear", style = inter(16f, FontWeight.SemiBold), textAlign = TextAlign.Center)
-                    Text("Arraste o ponto até o fim ou toque no cadeado", style = plexMono(11f, color = InkSoft), textAlign = TextAlign.Center)
+                    Text("Arraste o ponto até o fim ou selecione o cadeado", style = plexMono(11f, color = InkSoft), textAlign = TextAlign.Center)
                 }
                 UnlockTrack(onUnlock)
             }
